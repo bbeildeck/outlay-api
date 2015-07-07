@@ -34,17 +34,29 @@ namespace Outlay.Modules
                 var exp = expenses.SingleOrDefault(x => x.Id == p.id);
                 if (exp == null)
                 {
-                    return HttpStatusCode.BadRequest;
+                    return HttpStatusCode.NotFound;
                 }
 
                 return Response.AsJson(exp);
             };
 
-            Post["/expense"] = p =>
+            Post["/expense"] = _ =>
             {
                 Expense exp = this.Bind();
                 expenses.Add(exp);
 
+                return Response.AsJson(expenses);
+            };
+
+            Delete["/expense/{id}"] = p =>
+            {
+                var i = expenses.FindIndex(x => x.Id == p.id);
+                if (i == -1)
+                {
+                    return HttpStatusCode.NotFound;
+                }
+
+                expenses.RemoveAt(i);
                 return Response.AsJson(expenses);
             };
         }
